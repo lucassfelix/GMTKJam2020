@@ -10,7 +10,11 @@ public class CursorController : MonoBehaviour
 
     private SpriteRenderer mouseRenderer;
     
-    private Vector2 newMousePos, cursorPos,oldMousePos;
+    public Vector2 newMousePos, cursorPos,oldMousePos;
+
+    private float xBorder = 5.25f, yBorder = 3.0f;
+
+    private float cursorSpeed = -0.2f;
 
     void Start()
     {
@@ -22,8 +26,7 @@ public class CursorController : MonoBehaviour
 
     void Update()
     {
-        CursorMovement();
-
+        FreeCursorMovement();
 
         //Inputs
         if(Input.GetMouseButtonDown(0))
@@ -35,20 +38,50 @@ public class CursorController : MonoBehaviour
         {
             mouseRenderer.sprite = mouseTextureIdle;
         }    
+    }
 
-        
+    void FreeCursorMovement()
+    {
+
+        newMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        cursorPos = newMousePos;
+
+        cursorPos.y = Mathf.Clamp(cursorPos.y, -yBorder, yBorder);
+        cursorPos.x = Mathf.Clamp(cursorPos.x, -xBorder, xBorder);
+
+        transform.position = cursorPos;
 
     }
 
-    void CursorMovement()
+    void ScrollCursorMovement()
+    {
+        newMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        cursorPos = new Vector2(cursorPos.x + cursorSpeed,newMousePos.y);
+
+        cursorPos.y = Mathf.Clamp(cursorPos.y, -yBorder, yBorder);
+        cursorPos.x = Mathf.Clamp(cursorPos.x, -xBorder, xBorder);
+
+        if (cursorPos.x == -xBorder)
+            cursorPos.x = xBorder;
+
+        transform.position = cursorPos;
+    }
+
+    void CursorMovementRightRestricted()
     {
         newMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
         var deltaMousePos = oldMousePos - newMousePos;
-
         cursorPos = cursorPos - deltaMousePos;
+
+        cursorPos.y = Mathf.Clamp(cursorPos.y, -yBorder, yBorder);
+        cursorPos.x = Mathf.Clamp(cursorPos.x,-xBorder, Mathf.Min(cursorPos.x, cursorPos.x + deltaMousePos.x) );
         
-        cursorPos.x = Mathf.Clamp(cursorPos.x,-5, Mathf.Min(cursorPos.x, cursorPos.x + deltaMousePos.x) );
+    
+        if(cursorPos.x == -xBorder)
+            cursorPos.x = xBorder;
 
         transform.position = cursorPos;
 
