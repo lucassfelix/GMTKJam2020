@@ -21,6 +21,8 @@ public class CursorController : MonoBehaviour
 
     private bool stampMode = false;
 
+    private int mouseMode = 0;
+
     void Start()
     {
         Cursor.SetCursor(null, new Vector2(4.5f, 0), CursorMode.Auto);
@@ -29,9 +31,34 @@ public class CursorController : MonoBehaviour
         mouseRenderer.sprite = mouseTextureIdle;
     }
 
+    public void SetMouseMovement(int mode)
+    {
+        mouseMode = mode;
+    }
+
     void Update()
     {
-        RightSideCursorMovement();
+
+        switch (mouseMode)
+        {
+            case 0:
+                FreeCursorMovement();
+                break;
+            case 1:
+                RightSideCursorMovement();
+                break;
+            case 2:
+                LeftSideCursorMovement();
+                break;
+            case 3:
+                CursorMovementRightRestricted();
+                break;
+            case 4:
+                ScrollCursorMovement();
+                break;
+            default:
+                break;
+        }
 
         //Inputs
         if(Input.GetMouseButtonDown(0))
@@ -50,8 +77,6 @@ public class CursorController : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Space))
         {
             documento.SetActive(!documento.activeSelf);
-            mouseRenderer.sprite = stamp.GetComponent<SpriteRenderer>().sprite;
-            stampMode = !stampMode;
         }
         
         if(Input.GetMouseButtonUp(0))
