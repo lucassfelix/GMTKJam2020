@@ -7,6 +7,7 @@ public class CursorController : MonoBehaviour
 
     public Sprite mouseTextureIdle; 
     public Sprite mouseTextureClicking;
+    public GameObject stamp;
 
     private SpriteRenderer mouseRenderer;
     
@@ -15,6 +16,10 @@ public class CursorController : MonoBehaviour
     private float xBorder = 5.25f, yBorder = 3.0f;
 
     private float cursorSpeed = -0.2f;
+
+    public GameObject documento;
+
+    private bool stampMode = false;
 
     void Start()
     {
@@ -26,18 +31,61 @@ public class CursorController : MonoBehaviour
 
     void Update()
     {
-        FreeCursorMovement();
+        RightSideCursorMovement();
 
         //Inputs
         if(Input.GetMouseButtonDown(0))
         {
-            mouseRenderer.sprite = mouseTextureClicking;
+            if(stampMode)
+            {
+                GameObject newStamp = Instantiate(stamp,cursorPos,Quaternion.identity);
+                newStamp.transform.parent = documento.transform;
+            }
+            else
+            {
+                mouseRenderer.sprite = mouseTextureClicking;
+            }
+        }
+
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            documento.SetActive(!documento.activeSelf);
+            mouseRenderer.sprite = stamp.GetComponent<SpriteRenderer>().sprite;
+            stampMode = !stampMode;
         }
         
         if(Input.GetMouseButtonUp(0))
         {
             mouseRenderer.sprite = mouseTextureIdle;
         }    
+    }
+
+    void RightSideCursorMovement()
+    {
+
+        newMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        cursorPos = newMousePos;
+
+        cursorPos.y = Mathf.Clamp(cursorPos.y, -yBorder, yBorder);
+        cursorPos.x = Mathf.Clamp(cursorPos.x, 0, xBorder);
+
+        transform.position = cursorPos;
+
+    }
+
+    void LeftSideCursorMovement()
+    {
+
+        newMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        cursorPos = newMousePos;
+
+        cursorPos.y = Mathf.Clamp(cursorPos.y, -yBorder, yBorder);
+        cursorPos.x = Mathf.Clamp(cursorPos.x, -xBorder, 0);
+
+        transform.position = cursorPos;
+
     }
 
     void FreeCursorMovement()
