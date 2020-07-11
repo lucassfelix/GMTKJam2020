@@ -4,7 +4,7 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - mouseTexture: {fileID: 2800000, guid: 10b9658f0357ec94e89f46f0b11f991e, type: 3}
+  - mouseTexture: {fileID: 2800000, guid: 651a251e731d23d4f8cd7c52d3bcc697, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
