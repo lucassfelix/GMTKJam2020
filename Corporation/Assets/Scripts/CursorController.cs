@@ -4,40 +4,55 @@ using UnityEngine;
 
 public class CursorController : MonoBehaviour
 {
-    private Texture2D mouseTextureIdle;
-  
-    private Texture2D mouseTextureClicking;
 
-  
-    void Awake()
-    {
-        mouseTextureIdle = Resources.Load("CursorIdle") as Texture2D;
+    public Sprite mouseTextureIdle; 
+    public Sprite mouseTextureClicking;
 
-        mouseTextureClicking = Resources.Load("CursorClick") as Texture2D;
-    }
+    private SpriteRenderer mouseRenderer;
+    
+    private Vector2 newMousePos, cursorPos,oldMousePos;
+
     void Start()
     {
-        Cursor.SetCursor(mouseTextureIdle, new Vector2(4.5f,0), CursorMode.Auto);
+        Cursor.SetCursor(null, new Vector2(4.5f, 0), CursorMode.Auto);
+        Cursor.visible = false;
+        mouseRenderer = this.GetComponent<SpriteRenderer>();
+        mouseRenderer.sprite = mouseTextureIdle;
     }
 
     void Update()
     {
+        CursorMovement();
 
 
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.z = Camera.main.nearClipPlane;
-
+        //Inputs
         if(Input.GetMouseButtonDown(0))
         {
-            Cursor.SetCursor(mouseTextureClicking, new Vector2(4.5f, 0), CursorMode.Auto);
-            Debug.Log(mousePos.ToString());
+            mouseRenderer.sprite = mouseTextureClicking;
         }
         
         if(Input.GetMouseButtonUp(0))
         {
-            Cursor.SetCursor(mouseTextureIdle, new Vector2(4.5f, 0), CursorMode.Auto);
+            mouseRenderer.sprite = mouseTextureIdle;
         }    
 
+        
+
+    }
+
+    void CursorMovement()
+    {
+        newMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        var deltaMousePos = oldMousePos - newMousePos;
+
+        cursorPos = cursorPos - deltaMousePos;
+        
+        cursorPos.x = Mathf.Clamp(cursorPos.x,-5, Mathf.Min(cursorPos.x, cursorPos.x + deltaMousePos.x) );
+
+        transform.position = cursorPos;
+
+        oldMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
     }
 
     
