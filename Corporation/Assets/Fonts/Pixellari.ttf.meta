@@ -1,16 +1,16 @@
 fileFormatVersion: 2
-guid: 40104e85ab26c5d418da049668c6804b
+guid: a2cac4d620f7cb54ba4cd1cb44b6a8fa
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
-  fontSize: 16
-  forceTextureCase: -2
+  fontSize: 32
+  forceTextureCase: -1
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontName: Karma
+  fontName: Pixellari
   fontNames:
-  - Karma
+  - Pixellari
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
