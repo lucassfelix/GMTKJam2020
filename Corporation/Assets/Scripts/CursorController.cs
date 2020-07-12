@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class CursorController : MonoBehaviour
 {
@@ -10,17 +12,17 @@ public class CursorController : MonoBehaviour
     public GameObject stamp;
 
     private SpriteRenderer mouseRenderer;
-    
-    public Vector2 newMousePos, cursorPos,oldMousePos;
+
+    private Vector2 newMousePos, cursorPos,oldMousePos;
 
     private float xBorder = 5.25f, yBorder = 3.0f;
 
     private float cursorSpeed = -0.2f;
 
     public GameObject documento;
-
     private bool stampMode = false;
 
+    public GameController gameController;
     private int mouseMode = 0;
 
     void Start()
@@ -29,6 +31,19 @@ public class CursorController : MonoBehaviour
         Cursor.visible = false;
         mouseRenderer = this.GetComponent<SpriteRenderer>();
         mouseRenderer.sprite = mouseTextureIdle;
+    }
+
+    private void OnCollisionStay2D(Collision2D other) {
+        if(Input.GetMouseButtonDown(0))
+        {
+            var pointer = new PointerEventData(EventSystem.current);
+            var butt = other.transform.GetComponent<Button>();
+            if(butt.enabled)
+            {
+                ExecuteEvents.Execute(butt.gameObject, pointer, ExecuteEvents.pointerDownHandler);
+                ExecuteEvents.Execute(butt.gameObject, pointer, ExecuteEvents.pointerUpHandler);
+            }
+        }
     }
 
     public void SetMouseMovement(int mode)
@@ -56,6 +71,9 @@ public class CursorController : MonoBehaviour
             case 4:
                 ScrollCursorMovement();
                 break;
+            case 5:
+                SlowFlappy();
+                break;
             default:
                 break;
         }
@@ -65,26 +83,42 @@ public class CursorController : MonoBehaviour
         {
             if(stampMode)
             {
-                GameObject newStamp = Instantiate(stamp,cursorPos,Quaternion.identity);
+                GameObject newStamp = new GameObject("Stamp");
+                newStamp.transform.position = cursorPos;
+                var aux = newStamp.AddComponent<SpriteRenderer>();
+                aux.sprite = mouseRenderer.sprite;
                 newStamp.transform.parent = documento.transform;
+
+
+                stampMode = false;
+                mouseRenderer.sprite = mouseTextureIdle;
+                gameController.ChangeCondition("stampMode",false);
             }
             else
             {
                 mouseRenderer.sprite = mouseTextureClicking;
             }
         }
-
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            documento.SetActive(!documento.activeSelf);
-        }
         
         if(Input.GetMouseButtonUp(0))
         {
-            mouseRenderer.sprite = mouseTextureIdle;
+            if(!stampMode)
+            {
+                mouseRenderer.sprite = mouseTextureIdle;
+            }
+            else
+            {
+
+            }
         }    
     }
 
+    public void StampMode(Sprite stampSprite)
+    {
+        documento.SetActive(true);
+        stampMode = true;
+        mouseRenderer.sprite = stampSprite;
+    }
     void RightSideCursorMovement()
     {
 
@@ -159,6 +193,21 @@ public class CursorController : MonoBehaviour
         transform.position = cursorPos;
 
         oldMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+    }
+
+    private void SlowFlappy()
+    {
+        newMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        cursorPos = new Vector2(cursorPos.x + cursorSpeed, 0);
+
+        cursorPos.y = Mathf.Clamp(cursorPos.y, -yBorder, yBorder);
+        cursorPos.x = Mathf.Clamp(cursorPos.x, -xBorder, xBorder);
+
+        if (cursorPos.x == -xBorder)
+            cursorPos.x = xBorder;
+
+        transform.position = cursorPos;
     }
 
     

@@ -5,28 +5,46 @@ using UnityEngine.UI;
 
 public class DialogoManager : MonoBehaviour
 {
-    public Text nameText;
-    public Text dialogueText;
 
-    public Animator animator;
+    
+
+    private Text nameText;
+    private Text dialogueText;
+
+    private Animator animator;
+
+    public Animator[] animators;
+    public Text[] nameTexts;
+    public Text[] dialogueTexts;
+
+
+    public GameController gameController;
 
     private Queue<string> sentences;
 
     // Use this for initialization
     void Start()
     {
+        animator = animators[0];
+        nameText = nameTexts[0];
+        dialogueText = dialogueTexts[0];
         sentences = new Queue<string>();
     }
 
     void Update() 
     {
-        if(Input.anyKeyDown)
+        if(Input.anyKeyDown && animator.GetBool("IsOpen"))
         {
             DisplayNextSentence();
         }    
     }
-    public void StartDialogue(Dialogo dialogue)
+    public void StartDialogue(Dialogo dialogue, int index)
     {
+        animator = animators[index];
+        nameText = nameTexts[index];
+        dialogueText = dialogueTexts[index];
+
+        gameController.DisableButtonInteraction();
         animator.SetBool("IsOpen", true);
 
         nameText.text = dialogue.name;
@@ -67,5 +85,6 @@ public class DialogoManager : MonoBehaviour
     void EndDialogue()
     {
         animator.SetBool("IsOpen", false);
+        gameController.EnableButtonInteraction();
     }
 }

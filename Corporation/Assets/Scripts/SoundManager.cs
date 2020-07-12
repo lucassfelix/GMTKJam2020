@@ -22,7 +22,17 @@ public class SoundManager: MonoBehaviour
         MenuPercussion,
         MenuLoop,
         MenuTransitionLevel1,
-        Level1Loop
+        Level1Loop,
+        MouseClick,
+        ButtonClick,
+        Level2Loop,
+        Level3Loop,
+        Talking1,
+        Talking2,
+        Talking3,
+        Talking4,
+        Talking5
+
     }
 
     public AudioSource PlaySound(Sound sound)
